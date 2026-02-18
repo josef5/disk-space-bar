@@ -39,24 +39,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateDiskInfo() {
         guard
             let attrs = try? FileManager.default.attributesOfFileSystem(forPath: "/"),
-//            let total = attrs[.systemSize] as? Int64,
-            let free  = attrs[.systemFreeSize] as? Int64
+            //let total = attrs[.systemSize] as? Int64,
+            let free = attrs[.systemFreeSize] as? Int64
         else {
             print("❌ Failed to read disk attributes")
             return
         }
-        
-//        print(free)
 
-//        let used = total - free
-//        let label = "\(formatBytes(used)) / \(formatBytes(total))"
+        // let used = total - free
+        // let label = "\(formatBytes(used)) / \(formatBytes(total))"
+        let freeGB = Double(free) / 1000000000
         let label = "\(formatBytes(free))"
         print("✅ Disk info: \(label)")
 
+        let color: NSColor = freeGB < 1.0 ? .red : .black
+
+        let attributed = NSAttributedString(
+            string: label,
+            attributes: [.foregroundColor: color]
+        )
+
         DispatchQueue.main.async {
             if let button = self.statusItem.button {
-                button.title = label
-//                button.title = "💾 \(label)"
+                button.attributedTitle = attributed
+                //button.title = label
+                //button.title = "💾 \(label)"
             } else {
                 print("❌ statusItem.button is nil")
             }
