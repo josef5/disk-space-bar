@@ -52,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let label = "\(formatBytes(free))"
         print("✅ Disk info: \(label)")
 
-        let color: NSColor = freeGB < 1.0 ? .red : .black
+        let color: NSColor = freeGB < 1.0 ? .red : .labelColor
 
         let attributed = NSAttributedString(
             string: label,
