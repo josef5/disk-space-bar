@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // let used = total - free
         // let label = "\(formatBytes(used)) / \(formatBytes(total))"
-        let freeGB = Double(free) / 1000000000
+        let freeGB = Double(free) / 1_000_000_000
         let label = "\(formatBytes(free))"
         print("✅ Disk info: \(label)")
 
