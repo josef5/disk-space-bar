@@ -19,6 +19,10 @@ struct DiskSpaceBarApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var timer: Timer?
+    
+    // Keep a reference to the info item so we can update it
+    var diskInfoMenuItem: NSMenuItem!
+    @objc func noOp() {}
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory) // Hide from Dock
@@ -30,9 +34,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
 
         updateDiskInfo()
+        updateMenu()
 
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             self?.updateDiskInfo()
+            self?.updateMenu()
         }
     }
 
@@ -68,6 +74,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 print("❌ statusItem.button is nil")
             }
         }
+    }
+    
+    func updateMenu() {
+        guard
+            let attrs = try? FileManager.default.attributesOfFileSystem(forPath: "/"),
+            let total = attrs[.systemSize] as? Int64,
+            let free  = attrs[.systemFreeSize] as? Int64
+        else { return }
+
+        let used = total - free
+        let infoText = "Free: \(formatBytes(free))  Used: \(formatBytes(used))  Total: \(formatBytes(total))"
+
+        let menu = NSMenu()
+
+        // Add menu item
+        diskInfoMenuItem = NSMenuItem(title: infoText, action: #selector(noOp), keyEquivalent: "")
+        diskInfoMenuItem.target = self
+        menu.addItem(diskInfoMenuItem)
+
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
+        statusItem.menu = menu
     }
 
     func formatBytes(_ bytes: Int64) -> String {
