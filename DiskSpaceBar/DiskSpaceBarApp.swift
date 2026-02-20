@@ -56,13 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let used = total - free
         let freeGB = Double(free) / 1_000_000_000
-        let color: NSColor = freeGB < 1.0 ? .red : .labelColor
         
         let infoAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.secondaryLabelColor,
             .font: NSFont.systemFont(ofSize: 11, weight: .light)
         ]
 
+        let color: NSColor = freeGB < 3.0 ? freeGB < 1.0 ? .systemRed : .systemOrange : .labelColor
         let infoText = "Free: \(formatBytes(free))   Used: \(formatBytes(used))   Total: \(formatBytes(total))"
 
         let barAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: color]
