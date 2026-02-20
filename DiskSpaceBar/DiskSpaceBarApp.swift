@@ -56,15 +56,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let used = total - free
         let freeGB = Double(free) / 1_000_000_000
-        
-        let infoAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.secondaryLabelColor,
-            .font: NSFont.systemFont(ofSize: 11, weight: .light)
-        ]
-
         let color: NSColor = freeGB < 3.0 ? freeGB < 1.0 ? .systemRed : .systemOrange : .labelColor
         let infoText = "Free: \(formatBytes(free))   Used: \(formatBytes(used))   Total: \(formatBytes(total))"
-
         let barAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: color]
         
         print("✅ Disk info: \(formatBytes(free))")
@@ -73,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let button = self.statusItem.button {
                 button.attributedTitle = NSAttributedString(string: "\(self.formatBytes(free))", attributes: barAttributes)
             }
-            self.diskInfoMenuItem.attributedTitle = NSAttributedString(string: infoText, attributes: infoAttributes)
+            self.diskInfoMenuItem.title = infoText
         }
     }
 
