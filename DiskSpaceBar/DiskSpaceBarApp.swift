@@ -76,6 +76,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return String(format: "%.2f GB", gb)
         }
         let mb = Double(bytes) / 1_000_000
-        return String(format: "%.2f MB", mb)
+        return String(format: "%.1f MB", mb)
     }
 }
