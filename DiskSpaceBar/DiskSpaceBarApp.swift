@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let attrs = try? FileManager.default.attributesOfFileSystem(forPath: "/"),
             let free = attrs[.systemFreeSize] as? Int64
         else {
-            print("❌ Failed to read disk attributes")
+            print("Failed to read disk attributes")
             return
         }
         
@@ -77,13 +77,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let infoText = textForDisplay(free: free, high: history.spaceHigh, low: history.spaceLow, rate: history.rate)
         
-        print(infoText)
+        print(infoText.string)
 
         DispatchQueue.main.async {
             if let button = self.statusItem.button {
                 button.attributedTitle = NSAttributedString(string: "\(self.formatBytes(free))", attributes: barAttributes)
             }
-            self.diskInfoMenuItem.title = infoText
+            self.diskInfoMenuItem.attributedTitle = infoText
         }
     }
     
@@ -118,18 +118,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return String(format: "%.1f MB", mb)
     }
     
-    func textForDisplay(free: Int64, high: Int64?, low: Int64?, rate: Int64? ) -> String {
+    func textForDisplay(free: Int64, high: Int64?, low: Int64?, rate: Int64?) -> NSAttributedString {
         let highDisplay = high.map { formatBytes($0) } ?? "--"
         let lowDisplay = low.map { formatBytes($0) } ?? "--"
-        var rateDisplay = ""
-        
+
+        let defaultAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.secondaryLabelColor,
+            .font: NSFont.systemFont(ofSize: NSFont.systemFontSize, weight: .regular)
+        ]
+
+        let result = NSMutableAttributedString(
+            string: "Free: \(formatBytes(free))  High: \(highDisplay)  Low: \(lowDisplay)  Rate: ",
+            attributes: defaultAttributes
+        )
+
         if let rate {
             let arrow = rate < 0 ? "↓" : "↑"
-            rateDisplay = "\(arrow) \(formatBytes(rate))/min"
+            let rateColor: NSColor = rate < 0 ? .systemRed : .systemGreen
+            let rateAttributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: rateColor,
+                .font: NSFont.systemFont(ofSize: NSFont.systemFontSize, weight: .regular)
+            ]
+            result.append(NSAttributedString(
+                string: "\(arrow) \(formatBytes(rate))",
+                attributes: rateAttributes
+            ))
         } else {
-            rateDisplay = "Calculating..."
+            result.append(NSAttributedString(string: "Calculating...", attributes: defaultAttributes))
         }
-        
-        return "Free: \(formatBytes(free)) High: \(highDisplay) Low: \(lowDisplay) Rate: \(rateDisplay)"
+
+        return result
     }
 }
