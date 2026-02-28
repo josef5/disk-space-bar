@@ -34,8 +34,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var diskInfoMenuItem: NSMenuItem!
     var history = History()
-    let sampleSize = 3
-    let interval = Double(60)
+    let sampleSize = 3 // rate calculated over last 3 samples (3 mins at 60s interval)
+    let interval = TimeInterval(60)
     
     // Noop function for menu item
     @objc func noOp() {}
