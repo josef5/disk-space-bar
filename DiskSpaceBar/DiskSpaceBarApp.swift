@@ -119,15 +119,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func textForDisplay(free: Int64, high: Int64?, low: Int64?, rate: Int64? ) -> String {
+        let highDisplay = high.map { formatBytes($0) } ?? "--"
+        let lowDisplay = low.map { formatBytes($0) } ?? "--"
         var rateDisplay = ""
         
         if let rate {
             let arrow = rate < 0 ? "↓" : "↑"
-            rateDisplay = "\(arrow) \(formatBytes(rate))"
+            rateDisplay = "\(arrow) \(formatBytes(rate))/min"
         } else {
             rateDisplay = "Calculating..."
         }
         
-        return "Free: \(formatBytes(free)) High: \(formatBytes(high ?? 0)) Low: \(formatBytes(low ?? Int64.max)) Rate: \(rateDisplay)"
+        return "Free: \(formatBytes(free)) High: \(highDisplay) Low: \(lowDisplay) Rate: \(rateDisplay)"
     }
 }
