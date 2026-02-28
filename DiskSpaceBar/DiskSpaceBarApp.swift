@@ -104,6 +104,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             
         }
+        
+        // Limit array to last few items (sampleSize)
+        history.diskReadings = Array(history.diskReadings.suffix(sampleSize))
     }
     
     func formatBytes(_ bytes: Int64) -> String {
